@@ -2,10 +2,7 @@ name: Release
 
 on:
   release:
-    types: [published, edited]
-  push:
-    branches:
-      - main
+    types: [published]
 
 jobs:
   build:
