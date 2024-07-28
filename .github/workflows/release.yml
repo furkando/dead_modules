@@ -48,7 +48,7 @@ jobs:
           end
 
           test do
-            assert_match 'Dead Modules v${{ github.event.release.tag_name }}', shell_output('#{bin}/dead_modules --version')
+            assert_match 'Dead Modules ${{ github.event.release.tag_name }}', shell_output('#{bin}/dead_modules --version')
           end
           end"
           echo "$FORMULA" > homebrew-tap/Formula/dead_modules.rb
