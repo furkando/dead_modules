@@ -2,6 +2,7 @@ package ui
 
 import (
 	"dead_modules/search"
+	"dead_modules/util"
 	"fmt"
 	"os"
 	"sort"
@@ -90,7 +91,8 @@ func updateTable(final bool) {
 
 	// Add the sorted modules to the table
 	for i, module := range search.Modules {
-		table.SetCell(i+1, 0, tview.NewTableCell(module.Path).
+		path := util.TruncatePath(module.Path, util.MaxPathLength)
+		table.SetCell(i+1, 0, tview.NewTableCell(path).
 			SetTextColor(tcell.ColorWhite).
 			SetAlign(tview.AlignLeft))
 		table.SetCell(i+1, 1, tview.NewTableCell(module.Modified.Format("2006-01-02 15:04:05")).

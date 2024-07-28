@@ -3,7 +3,6 @@ package ui
 import (
 	"dead_modules/delete"
 	"dead_modules/search"
-	"fmt"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -15,8 +14,7 @@ var (
 )
 
 const (
-	maxPathLength = 50
-	title         = "[yellow]Dead Modules v1.0.0[white]"
+	title = "[yellow]Dead Modules v1.0.0[white]"
 )
 
 func ShowModules() {
@@ -30,20 +28,6 @@ func ShowModules() {
 			SetTextColor(tcell.ColorYellow).
 			SetAlign(tview.AlignCenter).
 			SetSelectable(false).SetExpansion(1))
-	}
-
-	for i, module := range search.Modules {
-		path := truncatePath(module.Path, maxPathLength)
-		table.SetCell(i+1, 0, tview.NewTableCell(path).
-			SetTextColor(tcell.ColorWhite).
-			SetAlign(tview.AlignLeft))
-
-		table.SetCell(i+1, 1, tview.NewTableCell(module.Modified.Format("2006-01-02 15:04:05")).
-			SetTextColor(tcell.ColorWhite).
-			SetAlign(tview.AlignCenter))
-		table.SetCell(i+1, 2, tview.NewTableCell(fmt.Sprintf("%d bytes", module.Size)).
-			SetTextColor(tcell.ColorWhite).
-			SetAlign(tview.AlignRight))
 	}
 
 	table.SetSelectedFunc(func(row, column int) {
@@ -109,13 +93,6 @@ func ShowModules() {
 
 func updateSearchStatus(status string) {
 	searchStatus.SetText(status)
-}
-
-func truncatePath(path string, maxLength int) string {
-	if len(path) > maxLength {
-		return "..." + path[len(path)-maxLength+3:]
-	}
-	return path
 }
 
 func updateRowColor(row int, color tcell.Color) {
