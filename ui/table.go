@@ -14,7 +14,7 @@ var (
 )
 
 const (
-	title = "[yellow]Dead Modules v1.0.0[white]"
+	title = "[yellow]Dead Modules v1.0.2[white]"
 )
 
 func ShowModules() {
