@@ -2,6 +2,8 @@
 
 Dead Modules is a CLI tool written in Go to search for and remove old `node_modules` directories within a working directory. It provides an interactive terminal interface to list, select, and delete these directories, helping you clean up disk space and manage your project dependencies more effectively.
 
+![Screenshot](<screenshot.png>)
+
 ## Features
 
 - **Interactive CLI**: Provides a user-friendly terminal interface using the `tview` package.
