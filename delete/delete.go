@@ -2,6 +2,7 @@ package delete
 
 import (
 	"dead_modules/search"
+	"dead_modules/util"
 	"fmt"
 	"os"
 	"sync"
@@ -12,12 +13,12 @@ import (
 func DeleteSelectedModules(app *tview.Application, table *tview.Table, logDebug func(format string, args ...interface{})) {
 	var wg sync.WaitGroup
 
-	for i, selected := range search.SelectedModules {
+	for path, selected := range search.SelectedModules {
 		if selected {
 			wg.Add(1)
-			go func(i int) {
+			go func(path string) {
 				defer wg.Done()
-				module := search.Modules[i]
+				i, module := util.FindModuleByPath(path, search.Modules)
 				app.QueueUpdateDraw(func() {
 					table.GetCell(i+1, 0).SetText(fmt.Sprintf("[yellow][Deleting[] %s", module.Path))
 				})
@@ -31,7 +32,7 @@ func DeleteSelectedModules(app *tview.Application, table *tview.Table, logDebug 
 						table.GetCell(i+1, 0).SetText(fmt.Sprintf("[green][DELETED[] %s", module.Path))
 					})
 				}
-			}(i)
+			}(path)
 		}
 	}
 

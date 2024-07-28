@@ -91,15 +91,20 @@ func updateTable(final bool) {
 
 	// Add the sorted modules to the table
 	for i, module := range search.Modules {
+		isSelected := search.SelectedModules[module.Path]
+		textColor := tcell.ColorWhite
+		if isSelected {
+			textColor = tcell.ColorGreen
+		}
 		path := util.TruncatePath(module.Path, util.MaxPathLength)
 		table.SetCell(i+1, 0, tview.NewTableCell(path).
-			SetTextColor(tcell.ColorWhite).
+			SetTextColor(textColor).
 			SetAlign(tview.AlignLeft))
 		table.SetCell(i+1, 1, tview.NewTableCell(module.Modified.Format("2006-01-02 15:04:05")).
-			SetTextColor(tcell.ColorWhite).
+			SetTextColor(textColor).
 			SetAlign(tview.AlignCenter))
 		table.SetCell(i+1, 2, tview.NewTableCell(fmt.Sprintf("%d bytes", module.Size)).
-			SetTextColor(tcell.ColorWhite).
+			SetTextColor(textColor).
 			SetAlign(tview.AlignRight))
 	}
 	if final {

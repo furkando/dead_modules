@@ -21,7 +21,7 @@ func (a ByModifiedDate) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByModifiedDate) Less(i, j int) bool { return a[i].Modified.Before(a[j].Modified) }
 
 var Modules []ModuleInfo
-var SelectedModules = make(map[int]bool)
+var SelectedModules = make(map[string]bool)
 
 func SearchOldModules(rootDir string, app *tview.Application, updateTable func(final bool), logDebug func(format string, args ...interface{})) {
 	filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {

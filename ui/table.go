@@ -30,25 +30,14 @@ func ShowModules() {
 			SetSelectable(false).SetExpansion(1))
 	}
 
-	table.SetSelectedFunc(func(row, column int) {
-		if row > 0 {
-			index := row - 1
-			search.SelectedModules[index] = !search.SelectedModules[index]
-			if search.SelectedModules[index] {
-				updateRowColor(row, tcell.ColorGreen)
-			} else {
-				updateRowColor(row, tcell.ColorWhite)
-			}
-		}
-	})
-
 	table.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyRune && event.Rune() == ' ' {
 			row, _ := table.GetSelection()
 			if row > 0 {
 				index := row - 1
-				search.SelectedModules[index] = !search.SelectedModules[index]
-				if search.SelectedModules[index] {
+				selectedModule := search.Modules[index]
+				search.SelectedModules[selectedModule.Path] = !search.SelectedModules[selectedModule.Path]
+				if search.SelectedModules[selectedModule.Path] {
 					updateRowColor(row, tcell.ColorGreen)
 				} else {
 					updateRowColor(row, tcell.ColorWhite)
