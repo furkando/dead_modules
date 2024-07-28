@@ -29,7 +29,7 @@ func ShowModules() {
 		table.SetCell(0, i, tview.NewTableCell(header).
 			SetTextColor(tcell.ColorYellow).
 			SetAlign(tview.AlignCenter).
-			SetSelectable(false))
+			SetSelectable(false).SetExpansion(1))
 	}
 
 	for i, module := range search.Modules {
@@ -37,6 +37,7 @@ func ShowModules() {
 		table.SetCell(i+1, 0, tview.NewTableCell(path).
 			SetTextColor(tcell.ColorWhite).
 			SetAlign(tview.AlignLeft))
+
 		table.SetCell(i+1, 1, tview.NewTableCell(module.Modified.Format("2006-01-02 15:04:05")).
 			SetTextColor(tcell.ColorWhite).
 			SetAlign(tview.AlignCenter))
@@ -50,9 +51,9 @@ func ShowModules() {
 			index := row - 1
 			search.SelectedModules[index] = !search.SelectedModules[index]
 			if search.SelectedModules[index] {
-				table.GetCell(row, 0).SetTextColor(tcell.ColorGreen)
+				updateRowColor(row, tcell.ColorGreen)
 			} else {
-				table.GetCell(row, 0).SetTextColor(tcell.ColorWhite)
+				updateRowColor(row, tcell.ColorWhite)
 			}
 		}
 	})
@@ -64,9 +65,9 @@ func ShowModules() {
 				index := row - 1
 				search.SelectedModules[index] = !search.SelectedModules[index]
 				if search.SelectedModules[index] {
-					table.GetCell(row, 0).SetTextColor(tcell.ColorGreen)
+					updateRowColor(row, tcell.ColorGreen)
 				} else {
-					table.GetCell(row, 0).SetTextColor(tcell.ColorWhite)
+					updateRowColor(row, tcell.ColorWhite)
 				}
 			}
 			return nil
@@ -84,16 +85,18 @@ func ShowModules() {
 		SetDynamicColors(true)
 
 	searchStatus = tview.NewTextView().
+		SetText("").
 		SetTextAlign(tview.AlignRight).
 		SetDynamicColors(true)
 
-	// Center the table and title using a Flex layout
+	// Create the main Flex layout
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(titleTextView, 1, 1, false).
-		AddItem(table, 0, 1, true). // Add the table
-		AddItem(debugTextView, 10, 1, false).
-		AddItem(searchStatus, 1, 1, false)
+		AddItem(nil, 0, 1, false).
+		AddItem(table, 0, 10, true).
+		AddItem(debugTextView, 0, 1, false).
+		AddItem(searchStatus, 1, 1, false) // Add the searchStatus directly
 
 	updateSearchStatus("[yellow]Searching...")
 	app.SetRoot(flex, true)
@@ -108,4 +111,10 @@ func truncatePath(path string, maxLength int) string {
 		return "..." + path[len(path)-maxLength+3:]
 	}
 	return path
+}
+
+func updateRowColor(row int, color tcell.Color) {
+	for i := 0; i < 3; i++ {
+		table.GetCell(row, i).SetTextColor(color)
+	}
 }
