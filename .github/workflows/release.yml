@@ -50,6 +50,7 @@ jobs:
           repository: furkando/homebrew-tap
           token: ${{ secrets.GH_PAT }}
           ref: main
+          path: homebrew-tap
 
       - name: Update Formula
         run: |
