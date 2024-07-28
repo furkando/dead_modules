@@ -28,9 +28,14 @@ jobs:
           ref: main
           path: homebrew-tap
 
+      - name: Download Release Tarball
+        run: |
+          wget https://github.com/furkando/dead_modules/archive/refs/tags/${{ github.event.release.tag_name }}.tar.gz -O release.tar.gz
+
       - name: Calculate SHA256
         id: sha256
-        run: echo "::set-output name=sha256::$(sha256sum dead_modules | awk '{ print $1 }')"
+        run: echo "::set-output name=sha256::$(sha256sum release.tar.gz | awk '{ print $1 }')"
+
 
       - name: Update Homebrew Tap Formula
         run: |
