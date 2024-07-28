@@ -72,7 +72,7 @@ func ShowModules() {
 			}
 			return nil
 		} else if event.Key() == tcell.KeyEnter {
-			delete.DeleteSelectedModules(app, table)
+			delete.DeleteSelectedModules(app, table, logDebug)
 			return nil
 		}
 		return event
