@@ -68,5 +68,11 @@ func ShowModules() {
 		return event
 	})
 
-	app.SetRoot(table, true)
+	// Center the table horizontally and vertically using a Flex layout
+	flex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(table, 0, 1, true). // Add the table
+		AddItem(debugTextView, 10, 1, false)
+
+	app.SetRoot(flex, true)
 }

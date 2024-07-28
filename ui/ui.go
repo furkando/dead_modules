@@ -11,6 +11,8 @@ import (
 const version = "1.0.0"
 
 var app *tview.Application
+var debugTextView *tview.TextView
+var debugEnabled = false
 
 func StartApp() error {
 	app = tview.NewApplication()
@@ -20,19 +22,27 @@ func StartApp() error {
 		SetTextAlign(tview.AlignCenter).
 		SetDynamicColors(true)
 
+	debugTextView = tview.NewTextView().
+		SetDynamicColors(true).
+		SetRegions(true).
+		SetScrollable(true).
+		SetChangedFunc(func() {
+			app.Draw()
+		})
+
 	textView.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEnter {
 			showLoading()
-			go search.SearchOldModules("/Users/furkan", app, updateTable)
+			go search.SearchOldModules("/Users/furkan/", app, updateTable, logDebug)
 		}
 	})
 
 	// Center the textView horizontally and vertically using a Flex layout
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(nil, 0, 1, false).     // Add a spacer at the top
-		AddItem(textView, 0, 1, true). // Add the textView
-		AddItem(nil, 0, 1, false)      // Add a spacer at the bottom
+		AddItem(nil, 0, 1, false).           // Add a spacer at the top
+		AddItem(textView, 0, 1, true).       // Add the textView
+		AddItem(debugTextView, 10, 1, false) // Add debug view at the bottom
 
 	return app.SetRoot(flex, true).Run()
 }
@@ -48,7 +58,7 @@ func showLoading() {
 		SetDirection(tview.FlexRow).
 		AddItem(nil, 0, 1, false).     // Add a spacer at the top
 		AddItem(textView, 0, 1, true). // Add the textView
-		AddItem(nil, 0, 1, false)      // Add a spacer at the bottom
+		AddItem(debugTextView, 10, 1, false)
 
 	app.SetRoot(flex, true)
 }
@@ -58,6 +68,9 @@ func updateTable() {
 		ShowModules()
 	}
 	row := len(search.Modules)
+	if row == 0 {
+		return
+	}
 	module := search.Modules[row-1]
 	table.SetCell(row, 0, tview.NewTableCell(module.Path).
 		SetTextColor(tcell.ColorWhite).
@@ -68,4 +81,11 @@ func updateTable() {
 	table.SetCell(row, 2, tview.NewTableCell(fmt.Sprintf("%d bytes", module.Size)).
 		SetTextColor(tcell.ColorWhite).
 		SetAlign(tview.AlignRight))
+}
+
+func logDebug(format string, args ...interface{}) {
+	if !debugEnabled {
+		return
+	}
+	fmt.Fprintf(debugTextView, format+"\n", args...)
 }

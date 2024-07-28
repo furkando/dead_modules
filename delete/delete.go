@@ -1,10 +1,9 @@
 package delete
 
 import (
+	"dead_modules/search"
 	"fmt"
 	"os"
-
-	"dead_modules/search"
 
 	"github.com/rivo/tview"
 )
