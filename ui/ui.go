@@ -33,7 +33,7 @@ func StartApp() error {
 	textView.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEnter {
 			showLoading()
-			go search.SearchOldModules("/Users/furkan/", app, updateTable, logDebug)
+			go search.SearchOldModules("/Users/furkan/Developer", app, updateTable, logDebug)
 		}
 	})
 
@@ -63,7 +63,7 @@ func showLoading() {
 	app.SetRoot(flex, true)
 }
 
-func updateTable() {
+func updateTable(final bool) {
 	if table == nil {
 		ShowModules()
 	}
@@ -81,6 +81,10 @@ func updateTable() {
 	table.SetCell(row, 2, tview.NewTableCell(fmt.Sprintf("%d bytes", module.Size)).
 		SetTextColor(tcell.ColorWhite).
 		SetAlign(tview.AlignRight))
+
+	if final {
+		updateSearchStatus("[green]Search complete.")
+	}
 }
 
 func logDebug(format string, args ...interface{}) {
