@@ -3,6 +3,8 @@ package ui
 import (
 	"dead_modules/search"
 	"fmt"
+	"os"
+	"sort"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -15,6 +17,16 @@ var debugTextView *tview.TextView
 var debugEnabled = false
 
 func StartApp() error {
+	// check if the debug flag is set
+	if len(os.Args) > 1 && os.Args[1] == "-debug" {
+		debugEnabled = true
+	}
+
+	directory, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	app = tview.NewApplication()
 
 	textView := tview.NewTextView().
@@ -33,7 +45,7 @@ func StartApp() error {
 	textView.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEnter {
 			showLoading()
-			go search.SearchOldModules("/Users/furkan/Developer", app, updateTable, logDebug)
+			go search.SearchOldModules(directory, app, updateTable, logDebug)
 		}
 	})
 
@@ -67,21 +79,27 @@ func updateTable(final bool) {
 	if table == nil {
 		ShowModules()
 	}
-	row := len(search.Modules)
-	if row == 0 {
-		return
-	}
-	module := search.Modules[row-1]
-	table.SetCell(row, 0, tview.NewTableCell(module.Path).
-		SetTextColor(tcell.ColorWhite).
-		SetAlign(tview.AlignLeft))
-	table.SetCell(row, 1, tview.NewTableCell(module.Modified.Format("2006-01-02 15:04:05")).
-		SetTextColor(tcell.ColorWhite).
-		SetAlign(tview.AlignCenter))
-	table.SetCell(row, 2, tview.NewTableCell(fmt.Sprintf("%d bytes", module.Size)).
-		SetTextColor(tcell.ColorWhite).
-		SetAlign(tview.AlignRight))
 
+	// Sort the modules by last modified date
+	sort.Sort(search.ByModifiedDate(search.Modules))
+
+	// Clear the existing rows except the header
+	for row := table.GetRowCount() - 1; row > 0; row-- {
+		table.RemoveRow(row)
+	}
+
+	// Add the sorted modules to the table
+	for i, module := range search.Modules {
+		table.SetCell(i+1, 0, tview.NewTableCell(module.Path).
+			SetTextColor(tcell.ColorWhite).
+			SetAlign(tview.AlignLeft))
+		table.SetCell(i+1, 1, tview.NewTableCell(module.Modified.Format("2006-01-02 15:04:05")).
+			SetTextColor(tcell.ColorWhite).
+			SetAlign(tview.AlignCenter))
+		table.SetCell(i+1, 2, tview.NewTableCell(fmt.Sprintf("%d bytes", module.Size)).
+			SetTextColor(tcell.ColorWhite).
+			SetAlign(tview.AlignRight))
+	}
 	if final {
 		updateSearchStatus("[green]Search complete.")
 	}

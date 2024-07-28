@@ -84,6 +84,11 @@ func ShowModules() {
 		SetTextAlign(tview.AlignCenter).
 		SetDynamicColors(true)
 
+	infoTextView := tview.NewTextView().
+		SetText("> Press [green]Space[] to select modules, [green]Enter[] to delete selected modules").
+		SetTextAlign(tview.AlignCenter).
+		SetDynamicColors(true)
+
 	searchStatus = tview.NewTextView().
 		SetText("").
 		SetTextAlign(tview.AlignRight).
@@ -92,8 +97,8 @@ func ShowModules() {
 	// Create the main Flex layout
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(titleTextView, 1, 1, false).
-		AddItem(nil, 0, 1, false).
+		AddItem(titleTextView, 0, 1, false).
+		AddItem(infoTextView, 0, 1, false).
 		AddItem(table, 0, 10, true).
 		AddItem(debugTextView, 0, 1, false).
 		AddItem(searchStatus, 1, 1, false) // Add the searchStatus directly
