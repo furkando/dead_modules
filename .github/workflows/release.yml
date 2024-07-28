@@ -9,51 +9,55 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '^1.16'
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "^1.16"
 
-    - name: Build
-      run: go build -o dead_modules
+      - name: Build
+        run: go build -o dead_modules
 
-    - name: Calculate SHA256
-      id: sha256
-      run: echo "::set-output name=sha256::$(sha256sum dead_modules | awk '{ print $1 }')"
+      - name: Calculate SHA256
+        id: sha256
+        run: echo "::set-output name=sha256::$(sha256sum dead_modules | awk '{ print $1 }')"
 
-    - name: Create Homebrew Tap Formula
-      run: |
-        FORMULA="class DeadModules < Formula
-        desc 'CLI tool to manage and delete old node_modules directories'
-        homepage 'https://github.com/furkando/dead_modules'
-        url 'https://github.com/furkando/dead_modules/archive/refs/tags/${{ github.event.release.tag_name }}.tar.gz'
-        sha256 '${{ steps.sha256.outputs.sha256 }}'
-        license 'MIT'
+      - name: Create Homebrew Tap Formula
+        run: |
+          FORMULA="class DeadModules < Formula
+          desc 'CLI tool to manage and delete old node_modules directories'
+          homepage 'https://github.com/furkando/dead_modules'
+          url 'https://github.com/furkando/dead_modules/archive/refs/tags/${{ github.event.release.tag_name }}.tar.gz'
+          sha256 '${{ steps.sha256.outputs.sha256 }}'
+          license 'MIT'
 
-        depends_on 'go' => :build
+          depends_on 'go' => :build
 
-        def install
-          system 'go', 'build', *std_go_args, '-o', bin/'dead_modules'
-        end
+          def install
+            system 'go', 'build', *std_go_args, '-o', bin/'dead_modules'
+          end
 
-        test do
-          assert_match 'Dead Modules v${{ github.event.release.tag_name }}', shell_output('#{bin}/dead_modules --version')
-        end
-        end"
+          test do
+            assert_match 'Dead Modules v${{ github.event.release.tag_name }}', shell_output('#{bin}/dead_modules --version')
+          end
+          end"
 
-    - name: Commit and Push Formula
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git clone git@github.com:furkando/homebrew-tap.git
-        cd homebrew-tap
-        mkdir -p Formula
-        echo "$FORMULA" > Formula/dead_modules.rb
-        git add Formula/dead_modules.rb
-        git commit -m "Update dead_modules formula to version ${{ github.event.release.tag_name }}"
-        git push origin main
+      - name: Checkout Homebrew Tap Repository
+        uses: actions/checkout@v4
+        with:
+          repository: furkando/homebrew-tap
+          token: ${{ secrets.GH_PAT }}
+          ref: main
+
+      - name: Update Formula
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          cd homebrew-tap
+          mkdir -p Formula
+          echo "$FORMULA" > Formula/dead_modules.rb
+          git add Formula/dead_modules.rb
+          git commit -m "Update dead_modules formula to version ${{ github.event.release.tag_name }}"
+          git push origin main
