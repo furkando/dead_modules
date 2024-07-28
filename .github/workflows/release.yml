@@ -3,6 +3,9 @@ name: Release
 on:
   release:
     types: [published, edited]
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -20,11 +23,19 @@ jobs:
       - name: Build
         run: go build -o dead_modules
 
+      - name: Checkout Homebrew Tap Repository
+        uses: actions/checkout@v4
+        with:
+          repository: furkando/homebrew-tap
+          token: ${{ secrets.GH_PAT }}
+          ref: main
+          path: homebrew-tap
+
       - name: Calculate SHA256
         id: sha256
         run: echo "::set-output name=sha256::$(sha256sum dead_modules | awk '{ print $1 }')"
 
-      - name: Create Homebrew Tap Formula
+      - name: Update Homebrew Tap Formula
         run: |
           FORMULA="class DeadModules < Formula
           desc 'CLI tool to manage and delete old node_modules directories'
@@ -43,22 +54,14 @@ jobs:
             assert_match 'Dead Modules v${{ github.event.release.tag_name }}', shell_output('#{bin}/dead_modules --version')
           end
           end"
+          echo "$FORMULA" > homebrew-tap/Formula/dead_modules.rb
 
-      - name: Checkout Homebrew Tap Repository
-        uses: actions/checkout@v4
-        with:
-          repository: furkando/homebrew-tap
-          token: ${{ secrets.GH_PAT }}
-          ref: main
-          path: homebrew-tap
 
-      - name: Update Formula
+      - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           cd homebrew-tap
-          mkdir -p Formula
-          echo "$FORMULA" > Formula/dead_modules.rb
           git add Formula/dead_modules.rb
           git commit -m "Update dead_modules formula to version ${{ github.event.release.tag_name }}"
           git push origin main
