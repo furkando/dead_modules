@@ -11,7 +11,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-const version = "1.0.0"
+const Version = "1.0.3"
 
 var app *tview.Application
 var debugTextView *tview.TextView
@@ -31,7 +31,7 @@ func StartApp() error {
 	app = tview.NewApplication()
 
 	textView := tview.NewTextView().
-		SetText("[yellow]Dead Modules v" + version + "[white]\n\nPress [green]Enter[white] to start searching for node_modules...").
+		SetText("[yellow]Dead Modules v" + Version + "[white]\n\nPress [green]Enter[white] to start searching for node_modules...").
 		SetTextAlign(tview.AlignCenter).
 		SetDynamicColors(true)
 

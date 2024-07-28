@@ -95,7 +95,7 @@ $ dead_modules
 - On startup, you will see the prompt:
 
   ```
-  Dead Modules v1.0.0
+  Dead Modules v1.0.3
 
   Press Enter to start searching for node_modules...
   ```
