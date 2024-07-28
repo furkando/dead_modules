@@ -43,7 +43,6 @@ jobs:
           assert_match 'Dead Modules v${{ github.event.release.tag_name }}', shell_output('#{bin}/dead_modules --version')
         end
         end"
-        echo "$FORMULA" > Formula/dead_modules.rb
 
     - name: Commit and Push Formula
       env:
