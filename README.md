@@ -14,7 +14,7 @@ Dead Modules is a CLI tool written in Go to search for and remove old `node_modu
 
 ## Installation
 
-1. ** Add brew tap**
+1. **Add brew tap**
 
    ```sh
    brew tap furkando/tap
