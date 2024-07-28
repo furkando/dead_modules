@@ -58,7 +58,7 @@ func ShowModules() {
 		SetDynamicColors(true)
 
 	infoTextView := tview.NewTextView().
-		SetText("> Press [green]Space[] to select modules, [green]Enter[] to delete selected modules").
+		SetText("> Press [green]Space[white] to select modules, [green]Enter[white] to delete selected modules").
 		SetTextAlign(tview.AlignCenter).
 		SetDynamicColors(true)
 
