@@ -1,16 +1,36 @@
 # Dead Modules
 
-Dead Modules is a CLI tool written in Go to search for and remove old `node_modules` directories within a specified directory. It provides an interactive terminal interface to list, select, and delete these directories, helping you clean up disk space and manage your project dependencies more effectively.
+Dead Modules is a CLI tool written in Go to search for and remove old `node_modules` directories within a working directory. It provides an interactive terminal interface to list, select, and delete these directories, helping you clean up disk space and manage your project dependencies more effectively.
 
 ## Features
 
 - **Interactive CLI**: Provides a user-friendly terminal interface using the `tview` package.
-- **Directory Scanning**: Recursively searches for `node_modules` directories within the specified root directory.
+- **Directory Scanning**: Recursively searches for `node_modules` directories within the working root directory.
 - **Selection and Deletion**: Allows users to select directories and delete them interactively.
 - **Dynamic Sorting**: Lists directories sorted by their last modified date.
 - **Status Updates**: Displays status messages and updates in real-time during the search and deletion processes.
 
 ## Installation
+
+1. ** Add brew tap**
+
+   ```sh
+   brew tap furkando/tap
+   ```
+
+2. **Install the Application**
+
+   ```sh
+   brew install dead_modules
+   ```
+
+3. **Run the Application**
+
+   ```sh
+   dead_modules
+   ```
+
+## Manual Installation
 
 1. **Clone the Repository**
 
